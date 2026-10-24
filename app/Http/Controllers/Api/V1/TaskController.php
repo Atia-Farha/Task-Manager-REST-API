@@ -50,4 +50,31 @@ class TaskController extends Controller
             'data' => $task,
         ]);
     }
+
+    public function update(Request $request, string $id)
+    {
+        $task = Task::find($id);
+
+        if (! $task) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task not found.',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'status' => ['required', 'in:pending,in_progress,completed'],
+            'priority' => ['required', 'in:low,medium,high'],
+        ]);
+
+        $task->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Task updated successfully.',
+            'data' => $task->fresh(),
+        ]);
+    }
 }
