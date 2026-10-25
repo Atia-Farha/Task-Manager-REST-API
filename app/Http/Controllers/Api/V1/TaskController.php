@@ -103,4 +103,20 @@ class TaskController extends Controller
             'message' => 'Task deleted successfully.',
         ]);
     }
+
+    public function summary()
+    {
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'total' => Task::count(),
+                'pending' => Task::where('status', 'pending')->count(),
+                'in_progress' => Task::where('status', 'in_progress')->count(),
+                'completed' => Task::where('status', 'completed')->count(),
+                'high_priority' => Task::where('priority', 'high')->count(),
+                'medium_priority' => Task::where('priority', 'medium')->count(),
+                'low_priority' => Task::where('priority', 'low')->count(),
+            ],
+        ]);
+    }
 }
