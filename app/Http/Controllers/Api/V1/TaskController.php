@@ -14,7 +14,8 @@ class TaskController extends Controller
     {
         $validated = $request->validate([
             'status' => ['sometimes', 'in:pending,in_progress,completed'],
-			'priority' => ['sometimes', 'in:low,medium,high'],
+            'priority' => ['sometimes', 'in:low,medium,high'],
+            'sort_by' => ['sometimes', 'in:created_at,title'],
         ]);
 
         $query = Task::query();
@@ -26,6 +27,9 @@ class TaskController extends Controller
         if (isset($validated['priority'])) {
             $query->where('priority', $validated['priority']);
         }
+
+        $sortBy = $validated['sort_by'] ?? 'created_at';
+        $query->orderBy($sortBy, 'desc');
 
         return response()->json([
             'success' => true,
