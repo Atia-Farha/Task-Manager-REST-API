@@ -3,21 +3,16 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\IndexTaskRequest;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
-use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    public function index(Request $request)
+    public function index(IndexTaskRequest $request)
     {
-        $validated = $request->validate([
-            'status' => ['sometimes', 'in:pending,in_progress,completed'],
-            'priority' => ['sometimes', 'in:low,medium,high'],
-            'sort_by' => ['sometimes', 'in:created_at,title'],
-			'sort_order' => ['sometimes', 'in:asc,desc'],
-        ]);
+        $validated = $request->validated();
 
         $query = Task::query();
 
@@ -30,7 +25,7 @@ class TaskController extends Controller
         }
 
         $sortBy = $validated['sort_by'] ?? 'created_at';
-		$sortOrder = $validated['sort_order'] ?? 'desc';
+        $sortOrder = $validated['sort_order'] ?? 'desc';
         $query->orderBy($sortBy, $sortOrder);
 
         return response()->json([
