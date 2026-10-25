@@ -25,6 +25,10 @@ class TaskController extends Controller
             $query->where('priority', $validated['priority']);
         }
 
+        if (isset($validated['search'])) {
+            $query->where('title', 'ilike', '%'.$validated['search'].'%');
+        }
+
         $sortBy = $validated['sort_by'] ?? 'created_at';
         $sortOrder = $validated['sort_order'] ?? 'desc';
 
