@@ -26,7 +26,18 @@ class TaskController extends Controller
 
         $sortBy = $validated['sort_by'] ?? 'created_at';
         $sortOrder = $validated['sort_order'] ?? 'desc';
-        $query->orderBy($sortBy, $sortOrder);
+
+        if ($sortBy === 'priority') {
+            $query->orderByRaw(
+                "CASE priority
+					WHEN 'low' THEN 1
+					WHEN 'medium' THEN 2
+					WHEN 'high' THEN 3
+				END {$sortOrder}"
+            );
+        } else {
+            $query->orderBy($sortBy, $sortOrder);
+        }
 
         return response()->json([
             'success' => true,

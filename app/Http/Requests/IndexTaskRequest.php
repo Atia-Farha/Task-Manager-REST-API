@@ -25,7 +25,7 @@ class IndexTaskRequest extends FormRequest
         return [
             'status' => ['sometimes', 'in:pending,in_progress,completed'],
             'priority' => ['sometimes', 'in:low,medium,high'],
-            'sort_by' => ['sometimes', 'in:created_at,title'],
+            'sort_by' => ['sometimes', 'in:created_at,title,priority'],
             'sort_order' => ['sometimes', 'in:asc,desc'],
         ];
     }
