@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\IndexTaskRequest;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Http\Resources\TaskResource;
 use App\Models\Task;
 
 class TaskController extends Controller
@@ -39,10 +40,10 @@ class TaskController extends Controller
             $query->orderBy($sortBy, $sortOrder);
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => $query->paginate(10),
-        ]);
+        return TaskResource::collection($query->paginate(10))
+            ->additional([
+                'success' => true,
+            ]);
     }
 
     public function store(StoreTaskRequest $request)
@@ -54,7 +55,7 @@ class TaskController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Task created successfully.',
-            'data' => $task,
+            'data' => new TaskResource($task),
         ], 201);
     }
 
@@ -62,7 +63,7 @@ class TaskController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => $task,
+            'data' => new TaskResource($task),
         ]);
     }
 
@@ -75,7 +76,7 @@ class TaskController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Task updated successfully.',
-            'data' => $task->fresh(),
+            'data' => new TaskResource($task->fresh()),
         ]);
     }
 
