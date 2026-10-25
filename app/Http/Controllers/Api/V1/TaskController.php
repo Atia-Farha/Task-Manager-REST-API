@@ -52,6 +52,8 @@ class TaskController extends Controller
             $query->orderBy($sortBy, $sortOrder);
         }
 
+        $query->orderBy('id', 'desc');
+
         return TaskResource::collection($query->paginate($validated['per_page'] ?? 10))
             ->additional([
                 'success' => true,
