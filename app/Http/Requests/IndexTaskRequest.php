@@ -29,6 +29,8 @@ class IndexTaskRequest extends FormRequest
             'sort_order' => ['sometimes', 'in:asc,desc'],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'search' => ['sometimes', 'string', 'max:255'],
+            'created_from' => ['sometimes', 'date', 'required_with:created_to'],
+            'created_to' => ['sometimes', 'date', 'after_or_equal:created_from'],
         ];
     }
 }
