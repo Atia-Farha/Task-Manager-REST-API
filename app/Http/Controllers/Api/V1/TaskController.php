@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
-use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
@@ -16,14 +17,9 @@ class TaskController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreTaskRequest $request)
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'status' => ['sometimes', 'in:pending,in_progress,completed'],
-            'priority' => ['sometimes', 'in:low,medium,high'],
-        ]);
+        $validated = $request->validated();
 
         $task = Task::create($validated);
 
@@ -51,7 +47,7 @@ class TaskController extends Controller
         ]);
     }
 
-    public function update(Request $request, string $id)
+    public function update(UpdateTaskRequest $request, string $id)
     {
         $task = Task::find($id);
 
@@ -62,12 +58,7 @@ class TaskController extends Controller
             ], 404);
         }
 
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'status' => ['required', 'in:pending,in_progress,completed'],
-            'priority' => ['required', 'in:low,medium,high'],
-        ]);
+        $validated = $request->validated();
 
         $task->update($validated);
 
