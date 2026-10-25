@@ -13,13 +13,18 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $validated = $request->validate([
-            'status' => ['required', 'in:pending,in_progress,completed'],
+            'status' => ['sometimes', 'in:pending,in_progress,completed'],
+			'priority' => ['sometimes', 'in:low,medium,high'],
         ]);
 
         $query = Task::query();
 
         if (isset($validated['status'])) {
             $query->where('status', $validated['status']);
+        }
+
+        if (isset($validated['priority'])) {
+            $query->where('priority', $validated['priority']);
         }
 
         return response()->json([
