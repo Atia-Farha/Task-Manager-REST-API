@@ -8,14 +8,17 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
     public function index(IndexTaskRequest $request)
     {
+        $this->authorize('viewAny', Task::class);
+
         $validated = $request->validated();
 
-        $query = Task::query();
+        $query = $request->user()->tasks();
 
         if (isset($validated['status'])) {
             $query->where('status', $validated['status']);
@@ -62,9 +65,11 @@ class TaskController extends Controller
 
     public function store(StoreTaskRequest $request)
     {
+        $this->authorize('create', Task::class);
+
         $validated = $request->validated();
 
-        $task = Task::create($validated);
+        $task = $request->user()->tasks()->create($validated);
 
         return response()->json([
             'success' => true,
@@ -75,6 +80,8 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
+        $this->authorize('view', $task);
+
         return response()->json([
             'success' => true,
             'data' => new TaskResource($task),
@@ -83,6 +90,8 @@ class TaskController extends Controller
 
     public function update(UpdateTaskRequest $request, Task $task)
     {
+        $this->authorize('update', $task);
+
         $validated = $request->validated();
 
         $task->update($validated);
@@ -96,6 +105,8 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
+        $this->authorize('delete', $task);
+
         $task->delete();
 
         return response()->json([
@@ -104,18 +115,22 @@ class TaskController extends Controller
         ]);
     }
 
-    public function summary()
+    public function summary(Request $request)
     {
+        $this->authorize('viewAny', Task::class);
+
+        $query = $request->user()->tasks();
+
         return response()->json([
             'success' => true,
             'data' => [
-                'total' => Task::count(),
-                'pending' => Task::where('status', 'pending')->count(),
-                'in_progress' => Task::where('status', 'in_progress')->count(),
-                'completed' => Task::where('status', 'completed')->count(),
-                'high_priority' => Task::where('priority', 'high')->count(),
-                'medium_priority' => Task::where('priority', 'medium')->count(),
-                'low_priority' => Task::where('priority', 'low')->count(),
+                'total' => (clone $query)->count(),
+                'pending' => (clone $query)->where('status', 'pending')->count(),
+                'in_progress' => (clone $query)->where('status', 'in_progress')->count(),
+                'completed' => (clone $query)->where('status', 'completed')->count(),
+                'high_priority' => (clone $query)->where('priority', 'high')->count(),
+                'medium_priority' => (clone $query)->where('priority', 'medium')->count(),
+                'low_priority' => (clone $query)->where('priority', 'low')->count(),
             ],
         ]);
     }
