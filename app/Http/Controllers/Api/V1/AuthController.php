@@ -6,12 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\LoginRequest;
 use App\Http\Requests\Api\V1\RegisterRequest;
 use App\Models\User;
+use Dedoc\Scramble\Attributes\Endpoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    #[Endpoint(
+        title: 'Create an account',
+    )]
     public function register(RegisterRequest $request)
     {
         $validated = $request->validated();
@@ -34,6 +38,9 @@ class AuthController extends Controller
         ], 201);
     }
 
+    #[Endpoint(
+        title: 'Login to an account',
+    )]
     public function login(LoginRequest $request)
     {
         $validated = $request->validated();
@@ -58,6 +65,9 @@ class AuthController extends Controller
         ]);
     }
 
+    #[Endpoint(
+        title: 'Log out from an account',
+    )]
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

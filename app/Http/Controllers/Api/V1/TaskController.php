@@ -9,10 +9,14 @@ use App\Http\Requests\Api\V1\UpdateTaskRequest;
 use App\Http\Resources\Api\V1\TaskResource;
 use App\Models\Task;
 use App\Services\TaskService;
+use Dedoc\Scramble\Attributes\Endpoint;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
+    #[Endpoint(
+        title: 'Retrieve all tasks',
+    )]
     public function index(IndexTaskRequest $request, TaskService $taskService)
     {
         $this->authorize('viewAny', Task::class);
@@ -28,6 +32,9 @@ class TaskController extends Controller
             ]);
     }
 
+    #[Endpoint(
+        title: 'Create a task',
+    )]
     public function store(StoreTaskRequest $request, TaskService $taskService)
     {
         $this->authorize('create', Task::class);
@@ -44,6 +51,9 @@ class TaskController extends Controller
         ], 201);
     }
 
+    #[Endpoint(
+        title: 'Retrieve a specific task',
+    )]
     public function show(Task $task)
     {
         $this->authorize('view', $task);
@@ -54,6 +64,9 @@ class TaskController extends Controller
         ]);
     }
 
+    #[Endpoint(
+        title: 'Update a task',
+    )]
     public function update(UpdateTaskRequest $request, Task $task, TaskService $taskService)
     {
         $this->authorize('update', $task);
@@ -70,6 +83,9 @@ class TaskController extends Controller
         ]);
     }
 
+    #[Endpoint(
+        title: 'Delete a task',
+    )]
     public function destroy(Task $task, TaskService $taskService)
     {
         $this->authorize('delete', $task);
@@ -82,6 +98,9 @@ class TaskController extends Controller
         ]);
     }
 
+    #[Endpoint(
+        title: 'Retrieve task summary',
+    )]
     public function summary(Request $request, TaskService $taskService)
     {
         $this->authorize('viewAny', Task::class);
