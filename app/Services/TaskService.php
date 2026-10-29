@@ -20,7 +20,7 @@ class TaskService
             $query->where('priority', $filters['priority']);
         }
 
-        if (isset($filters['search'])) {
+        if (! empty($filters['search'])) {
             $query->where('title', 'ilike', '%'.$filters['search'].'%');
         }
 
@@ -61,7 +61,7 @@ class TaskService
     {
         $task->update($data);
 
-        return $task->fresh();
+        return $task->refresh();
     }
 
     public function deleteTask(Task $task): void
